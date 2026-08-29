@@ -1,0 +1,29 @@
+# Local planning notes — not published with the repo
+docs/adr/
+docs/
+docs/project-plan.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Tooling caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local data & secrets — never commit either
+data/
+*.duckdb
+*.db
+.env
+.env.*
+!.env.example
+.databrickscfg
