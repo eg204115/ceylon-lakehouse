@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 env:
-  UV_FROZEN: "1" # fail if uv.lock is out of date rather than silently resolving
+  UV_LOCKED: "1"
 
 jobs:
   quality:
@@ -31,10 +31,8 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --locked
+        run: uv sync
 
-      # Each gate runs even if an earlier one failed, so one push surfaces every
-      # problem instead of one per round trip.
       - name: Lint
         if: '!cancelled()'
         run: uv run ruff check --output-format=github .
