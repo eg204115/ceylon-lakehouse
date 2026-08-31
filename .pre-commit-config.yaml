@@ -31,7 +31,10 @@ repos:
     hooks:
       - id: mypy
         args: [--strict]
-        additional_dependencies: [pytest>=8.3]
+        # The hook runs mypy in its own isolated environment, so every
+        # package the checked code imports must be listed here as well as in
+        # pyproject.toml — otherwise the hook and CI disagree.
+        additional_dependencies: [pytest>=8.3, types-PyYAML>=6.0]
 
   # Practice 12: no credential ever reaches a commit.
   - repo: https://github.com/gitleaks/gitleaks

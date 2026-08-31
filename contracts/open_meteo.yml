@@ -1,0 +1,112 @@
+# Data contract — Open-Meteo daily weather
+#
+# Written before the extractor (practice 25). This file is the agreement: the DQ
+# suite asserts against it from Stage 3, so documentation and enforcement cannot
+# drift apart.
+
+contract_version: 1
+source_id: open_meteo
+name: Open-Meteo daily weather
+owner: nethmipoornima2020@gmail.com
+
+provider:
+  homepage: https://open-meteo.com/
+  endpoint: https://api.open-meteo.com/v1/forecast
+  authentication: none # keyless, which is why this is the first source
+  terms: https://open-meteo.com/en/terms
+  licence: CC-BY-4.0
+  attribution_required: true
+  rate_limit: ~10k requests/day on the free tier; we use 5/day
+
+classification:
+  pii: none # public meteorological aggregates, no personal data
+  confidentiality: public
+
+cadence:
+  frequency: daily
+  grain: one row per location per calendar day
+  availability_window: |
+    The forecast endpoint serves roughly the past 92 days and 16 days ahead.
+    Run dates outside that window will not resolve and must use the archive
+    endpoint instead — not yet implemented, tracked for Stage 5.
+  revision_behaviour: |
+    Recent days are revised as observations replace forecasts. A date re-fetched
+    later can legitimately differ. Bronze keeps every fetch; silver takes the
+    latest by ingest time.
+
+request:
+  method: GET
+  parameters:
+    latitude: float, required
+    longitude: float, required
+    start_date: YYYY-MM-DD, required, equals the run date
+    end_date: YYYY-MM-DD, required, equals the run date
+    daily: comma-separated variable list, required
+    timezone: IANA name, required
+
+schema:
+  # Shape of the raw response. Bronze stores it verbatim; this describes what
+  # silver will find inside it.
+  root:
+    latitude: { type: float, nullable: false }
+    longitude: { type: float, nullable: false }
+    generationtime_ms: { type: float, nullable: false, volatile: true }
+    utc_offset_seconds: { type: int, nullable: false }
+    timezone: { type: string, nullable: false }
+    elevation: { type: float, nullable: true }
+    daily_units: { type: object, nullable: false }
+    daily: { type: object, nullable: false }
+  daily:
+    # Parallel arrays, all the same length as `time`.
+    time: { type: array<date>, nullable: false }
+    temperature_2m_max: { type: array<float>, nullable: true, unit: celsius }
+    temperature_2m_min: { type: array<float>, nullable: true, unit: celsius }
+    temperature_2m_mean: { type: array<float>, nullable: true, unit: celsius }
+    precipitation_sum: { type: array<float>, nullable: true, unit: mm }
+    rain_sum: { type: array<float>, nullable: true, unit: mm }
+    wind_speed_10m_max: { type: array<float>, nullable: true, unit: km/h }
+    shortwave_radiation_sum: { type: array<float>, nullable: true, unit: MJ/m2 }
+
+primary_key: [location_id, date]
+
+expectations:
+  # Asserted by the DQ gates from Stage 3. Recorded now so the extractor is
+  # written against a known target.
+  - id: one_row_per_location_per_day
+    rule: count(daily.time) == 1 for a single-date request
+    severity: fail
+  - id: arrays_are_parallel
+    rule: every array under `daily` has the same length as `daily.time`
+    severity: fail
+  - id: date_matches_run_date
+    rule: daily.time[0] == run_date
+    severity: fail
+  - id: temperature_within_plausible_range
+    rule: -10 <= temperature_2m_min <= temperature_2m_max <= 55
+    severity: fail
+  - id: precipitation_non_negative
+    rule: precipitation_sum >= 0 and rain_sum >= 0
+    severity: fail
+  - id: all_locations_present
+    rule: 5 payloads landed per run date
+    severity: warn # one location failing must not fail the run
+
+slo:
+  freshness: bronze payload for date D exists by 06:00 UTC on D+1
+  completeness: 99% of expected location-days present over a trailing 30 days
+
+failure_behaviour: |
+  A location that fails after all retry attempts is recorded as degraded in the
+  run manifest and does not fail the run (practice 63). A run where every
+  location fails is a failure. Retries cover timeouts, connection errors and
+  HTTP 408/425/429/5xx only; a 4xx other than those is a contract breach and is
+  not retried.
+
+locations:
+  # Chosen to mirror the sectors this platform covers: resort coasts, the tea
+  # highlands, the bunkering port, and the Maldives leisure market.
+  - { id: colombo, name: Colombo, latitude: 6.9271, longitude: 79.8612, timezone: Asia/Colombo }
+  - { id: galle, name: Galle, latitude: 6.0535, longitude: 80.2210, timezone: Asia/Colombo }
+  - { id: trincomalee, name: Trincomalee, latitude: 8.5874, longitude: 81.2152, timezone: Asia/Colombo }
+  - { id: nuwara_eliya, name: Nuwara Eliya, latitude: 6.9497, longitude: 80.7891, timezone: Asia/Colombo }
+  - { id: male, name: Malé, latitude: 4.1755, longitude: 73.5093, timezone: Indian/Maldives }

@@ -5,9 +5,21 @@ and capital-market data.
 
 **Stack:** Databricks (Lakeflow Jobs & Pipelines, Unity Catalog, Auto Loader, SQL warehouse, MLflow) · PySpark · Delta Lake · dbt · Azure (Databricks, ADLS Gen2, Data Factory) · GitHub Actions
 
-> **Status: planning.** The staged build is in [docs/roadmap.md](docs/roadmap.md) and the
-> practices it is built to are in [docs/engineering-standards.md](docs/engineering-standards.md).
-> No pipeline code yet.
+> **Status: Stage 1 of 8.** Open-Meteo extraction runs locally and is idempotent. Nothing on
+> Databricks yet — Stage 2 is the walking skeleton. The staged build is in
+> [docs/roadmap.md](docs/roadmap.md); the practices it is built to are in
+> [docs/engineering-standards.md](docs/engineering-standards.md).
+
+## Quickstart
+
+```bash
+uv sync
+uv run python -m ceylon.ingest --source open_meteo --run-date 2026-08-20
+```
+
+Raw payloads land under `data/landing/open_meteo/run_date=<date>/`, one JSON file per location
+plus a `_manifest.json` recording the run. Re-running a date is safe — it rewrites the same
+files rather than accumulating copies.
 
 ## Why this project
 
@@ -64,3 +76,4 @@ docs/           plan, architecture, data contracts, runbook, ADRs
 
 - [Roadmap](docs/roadmap.md) — the staged build, simple to advanced
 - [Engineering standards](docs/engineering-standards.md) — the practices this is built to, and the checklist
+- [Data contract — Open-Meteo](contracts/open_meteo.yml) — schema, SLOs, failure behaviour

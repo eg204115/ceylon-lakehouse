@@ -5,7 +5,9 @@ description = "Medallion-architecture lakehouse over Sri Lankan public data"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 license = { text = "MIT" }
-dependencies = []
+dependencies = [
+    "pyyaml>=6.0",
+]
 
 # Pinned to 3.11 deliberately: Databricks Runtime ships 3.11, and a local
 # interpreter that drifts ahead of the cluster is a class of bug worth not having.
@@ -16,6 +18,7 @@ dev = [
     "pre-commit>=3.8",
     "pytest>=8.3",
     "pytest-cov>=5.0",
+    "types-pyyaml>=6.0",
     "ruff>=0.6",
 ]
 

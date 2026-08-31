@@ -1,0 +1,49 @@
+# Source configuration. Behaviour lives here, not in literals scattered through
+# code — the contract in docs/contracts/ is the agreement, this is the wiring.
+
+version: 1
+
+defaults:
+  timeout_seconds: 30.0
+  max_attempts: 4
+  backoff_seconds: 1.0 # doubled per attempt, with jitter
+
+sources:
+  open_meteo:
+    enabled: true
+    contract: contracts/open_meteo.yml
+    endpoint: https://api.open-meteo.com/v1/forecast
+    daily_variables:
+      - temperature_2m_max
+      - temperature_2m_min
+      - temperature_2m_mean
+      - precipitation_sum
+      - rain_sum
+      - wind_speed_10m_max
+      - shortwave_radiation_sum
+    locations:
+      - id: colombo
+        name: Colombo
+        latitude: 6.9271
+        longitude: 79.8612
+        timezone: Asia/Colombo
+      - id: galle
+        name: Galle
+        latitude: 6.0535
+        longitude: 80.2210
+        timezone: Asia/Colombo
+      - id: trincomalee
+        name: Trincomalee
+        latitude: 8.5874
+        longitude: 81.2152
+        timezone: Asia/Colombo
+      - id: nuwara_eliya
+        name: Nuwara Eliya
+        latitude: 6.9497
+        longitude: 80.7891
+        timezone: Asia/Colombo
+      - id: male
+        name: Malé
+        latitude: 4.1755
+        longitude: 73.5093
+        timezone: Indian/Maldives

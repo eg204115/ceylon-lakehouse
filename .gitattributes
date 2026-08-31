@@ -1,0 +1,11 @@
+# Normalise line endings to LF, in the repository and in the working tree.
+#
+# Without this, core.autocrlf=true checks files out as CRLF, the
+# mixed-line-ending pre-commit hook rewrites them to LF, and every commit
+# fights the last one. Pinning eol=lf ends that loop and keeps diffs clean
+# across Windows, the Linux CI runner and Databricks.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.pdf binary
