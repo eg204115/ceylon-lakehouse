@@ -1,0 +1,25 @@
+# Portable editor defaults. Together with .gitattributes (eol=lf) this stops the
+# mixed-line-ending pre-commit hook from firing on every newly created file:
+# .gitattributes governs what git writes, this governs what the editor writes.
+#
+# Note: VS Code needs the EditorConfig.EditorConfig extension to honour this.
+# .vscode/settings.json covers VS Code natively, without the extension.
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+indent_style = space
+
+[*.py]
+indent_size = 4
+max_line_length = 88
+
+[*.{yml,yaml,toml,json}]
+indent_size = 2
+
+[*.md]
+# Two trailing spaces are a hard line break in Markdown.
+trim_trailing_whitespace = false

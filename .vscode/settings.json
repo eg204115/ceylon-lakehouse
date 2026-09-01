@@ -1,11 +1,13 @@
 {
-    "chat.agentSkillsLocations": {
-        ".agents/skills": true,
-        ".github/skills": true,
-        ".claude/skills": true,
-        "~/.agents/skills": true,
-        "~/.copilot/skills": true,
-        "~/.claude/skills": true,
-        "~/.vscode/extensions/synapsevscode.synapse-1.25.0/copilot/skills": true
-    }
+  // Windows defaults new files to CRLF, which trips the mixed-line-ending
+  // pre-commit hook once per file. Pinning LF here matches .gitattributes and
+  // needs no extension.
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  },
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"]
 }
