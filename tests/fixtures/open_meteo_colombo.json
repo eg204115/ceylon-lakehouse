@@ -1,0 +1,29 @@
+{
+  "latitude": 6.9375,
+  "longitude": 79.875,
+  "generationtime_ms": 0.0521540641784668,
+  "utc_offset_seconds": 19800,
+  "timezone": "Asia/Colombo",
+  "timezone_abbreviation": "+0530",
+  "elevation": 6.0,
+  "daily_units": {
+    "time": "iso8601",
+    "temperature_2m_max": "\u00b0C",
+    "temperature_2m_min": "\u00b0C",
+    "temperature_2m_mean": "\u00b0C",
+    "precipitation_sum": "mm",
+    "rain_sum": "mm",
+    "wind_speed_10m_max": "km/h",
+    "shortwave_radiation_sum": "MJ/m\u00b2"
+  },
+  "daily": {
+    "time": ["2026-08-01"],
+    "temperature_2m_max": [30.4],
+    "temperature_2m_min": [25.1],
+    "temperature_2m_mean": [27.3],
+    "precipitation_sum": [4.2],
+    "rain_sum": [4.2],
+    "wind_speed_10m_max": [21.6],
+    "shortwave_radiation_sum": [18.94]
+  }
+}

@@ -8,14 +8,20 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      # tests/fixtures holds bytes captured from real responses, including
+      # deliberately malformed ones. A hook that tidies a fixture silently
+      # changes what the test asserts, so these three skip that directory.
       - id: trailing-whitespace
+        exclude: ^tests/fixtures/
       - id: end-of-file-fixer
+        exclude: ^tests/fixtures/
       - id: check-yaml
       - id: check-toml
       - id: check-merge-conflict
       - id: check-case-conflict
       - id: mixed-line-ending
         args: [--fix=lf]
+        exclude: ^tests/fixtures/
       - id: check-added-large-files
         args: [--maxkb=512]
 
